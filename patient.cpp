@@ -3,6 +3,36 @@
 #include <string>
 #include <ctime>
 using namespace std;
+int getMaxIDFromFile(const string &filename)
+{
+    int maxID = 0;
+    ifstream file(filename.c_str());
+    if (file.is_open())
+    {
+        int id, age, doctorID, roomID;
+        string name, gender, disease;
+        time_t arrivalTime;
+        bool checkoutStatus;
+        char delimiter;
+
+        while (file >> id >> delimiter)
+        {
+            getline(file, name, ',');
+            file >> age >> delimiter;
+            getline(file, gender, ',');
+            getline(file, disease, ',');
+            file >> doctorID >> delimiter >> roomID >> delimiter >> arrivalTime >> delimiter >> checkoutStatus;
+
+            if (id > maxID)
+            {
+                maxID = id;
+            }
+        }
+        file.close();
+    }
+    return maxID;
+}
+
 class Patient
 {
 public:
@@ -20,17 +50,15 @@ public:
     Patient(string name, int age, string gender, string disease, int doctorID, int roomID)
         : name(name), age(age), gender(gender), diseaseDescription(disease), assignedDoctorID(doctorID), roomID(roomID)
     {
-        cout<<"idCounter: "<<idCounter<<endl;
-        patientID =idCounter++;
+        cout << "idCounter: " << idCounter << endl;
+        patientID = idCounter++;
         arrivalTime = time(0);
         checkoutStatus = false;
     }
 
     Patient(int id, string name, int age, string gender, string disease, int doctorID, int roomID, time_t arrivalTime, bool status)
         : patientID(id), name(name), age(age), gender(gender), diseaseDescription(disease), assignedDoctorID(doctorID), roomID(roomID), arrivalTime(arrivalTime), checkoutStatus(status)
-    {
-        idCounter++;
-    }
+    {}
 
     void saveToFile()
     {
@@ -145,6 +173,7 @@ public:
             front = front->next;
             Patient *d = temp->data;
             delete temp;
+            removeFromFile(d->patientID);
             return d;
         }
     }
@@ -157,6 +186,40 @@ public:
             cout << "ID: " << temp->data->patientID << ", Name: " << temp->data->name << ", Age: " << temp->data->age << ", Gender: " << temp->data->gender << ", Disease: " << temp->data->diseaseDescription << ", Doctor ID: " << temp->data->assignedDoctorID << ", Room ID: " << temp->data->roomID << ", Date of Admission: " << temp->data->getFormattedArrivalTime() << ", Checkout Status: " << (temp->data->checkoutStatus ? "Checked out" : "Not checked out") << endl;
             temp = temp->next;
         }
+    }
+    void removeFromFile(int patientID)
+    {
+        ifstream file("appointment.txt");
+        ofstream tempFile("temp.txt");
+        int id, age, doctorID, roomID;
+        string name, gender, disease;
+        time_t arrivalTime;
+        bool checkoutStatus;
+        char delimiter;
+
+        while (file >> id >> delimiter)
+        {
+            getline(file, name, ',');
+            file >> age >> delimiter;
+            getline(file, gender, ',');
+            getline(file, disease, ',');
+            file >> doctorID >> delimiter >> roomID >> delimiter >> arrivalTime >> delimiter >> checkoutStatus;
+
+            // If the ID does not match the patientID to be removed, write to tempFile
+            if (id != patientID)
+            {
+                tempFile << id << "," << name << "," << age << "," << gender << ","
+                         << disease << "," << doctorID << "," << roomID << ","
+                         << arrivalTime << "," << checkoutStatus << endl;
+            }
+        }
+
+        file.close();
+        tempFile.close();
+
+        // Replace original file with updated file
+        remove("appointment.txt");
+        rename("temp.txt", "appointment.txt");
     }
 };
 
@@ -218,21 +281,24 @@ public:
 
         return rightChild;
     }
-    AVLNode *insert(AVLNode *root, Patient *value)
+    AVLNode *insert(AVLNode *root, Patient *value, bool saveToFile = false)
     {
         if (root == NULL)
         {
-            value->saveToHistory();
+            if (saveToFile)
+            {
+                value->saveToHistory(); // Save only if explicitly asked
+            }
             return new AVLNode(value);
         }
 
         if (value->patientID < root->data->patientID)
         {
-            root->left = insert(root->left, value);
+            root->left = insert(root->left, value, saveToFile);
         }
         else if (value->patientID > root->data->patientID)
         {
-            root->right = insert(root->right, value);
+            root->right = insert(root->right, value, saveToFile);
         }
         else
         {
@@ -302,8 +368,16 @@ void loadHistory(AVLTree &avl)
 }
 int main()
 {
+    // Find the maximum ID in both files
+    int maxIDInAppointments = getMaxIDFromFile("appointment.txt");
+    int maxIDInHistory = getMaxIDFromFile("history.txt");
+    Patient::idCounter = max(maxIDInAppointments, maxIDInHistory) + 1;
     linked_list appointments;
     loadAppointments(appointments);
+    AVLTree avl;
+    loadHistory(avl);
+
+    // Add new patients
     int numPatients;
     cout << "Enter the number of patients to add: ";
     cin >> numPatients;
@@ -325,24 +399,26 @@ int main()
         cin >> doctorID;
         cout << "Enter room ID: ";
         cin >> roomID;
+
         appointments.enque(new Patient(name, age, gender, disease, doctorID, roomID));
     }
+
     appointments.display();
-    // Create an AVL tree for storing patient data as history1
-    AVLTree avl;
-    loadHistory(avl);
+
     // Dequeue from linked list and insert into AVL tree
     while (!appointments.Empty())
     {
         Patient *patient = appointments.deque();
-        
-        avl.root = avl.insert(avl.root, patient);
+        avl.root = avl.insert(avl.root, patient, true); // Save to history only during dequeuing
     }
+
     if (appointments.Empty())
     {
-        cout << "\nEmpty Done" << endl;
+        cout << "\nAll appointments processed." << endl;
     }
+
     cout << "Inorder Traversal of AVL Tree:\n";
     avl.inorder(avl.root);
+
     return 0;
 }
