@@ -1,0 +1,198 @@
+//Our main objective:- Can perform some selected fucntionalities from those of manager
+//receptionist:-
+// ->patient appointments(assign a doctor to a patient)(add patient)(check doctor availablity) (assign room:id)
+// ->view patient history (sorting type shii)
+// ->view all doctors (sorting type shii) (avaiablity)(assigned nurses)
+// ->search doctor
+// ->search patient
+//->view nurses
+//->search nurses
+// ->view rooms (check avaiable rooms)
+//->search rooms
+// ->made tokens (a chit where details about coming appointment will be written. Like its time, doctor name, room id, things like this that are required. This will be given to the patient. )
+// ->check out of patients after work done.//recieptionist
+// ->sign-in
+// ->logout
+// ->change password
+// ->view self info
+// ->update info
+
+// -------------------------------------------------------------------------------------------------------------------
+// manager:- Can perform almost all functionalities
+// ->patient appointments(assign a doctor to a patient)(add patient)(check doctor availablity) (assign room:id)
+// ->view patient history (sorting type shii)
+// ->view doctor history (sorting type shii)
+// ->view all doctors (sorting type shii)
+// ->search doctor
+// ->search patient
+// ->add doctor
+//->add nurses
+//->assign nurse to a doctor.
+//->view nurses
+//->search nurses
+// ->view rooms (check avaiable rooms)
+//->search rooms
+// ->made tokens
+// ->check out of patients after work done.//recieptionist
+// ->sign-in
+// ->logout
+// ->change password
+// ->view self info
+// ->update info
+
+// -------------------------------------------------------------------------------------------------------------------
+// //graphs will be used in this portion. Leave it for now. Like leave its space in project, we will work on it later.
+// ambulance_manager:-
+// ->ambulance (random cals/msgs will come that ambulance is needed falan place)
+// ->assign amulances to locations
+// ->view available ambulances
+// ->view ambulance appointments
+// ->clear ambulance appointments
+
+// -------------------------------------------------------------------------------------------------------------------
+// doctor:-
+// ->prescription when patient come doctor prescribe medicines and operation if required. 
+// ->view assigned nurese or nurses
+// ->view appointments
+// ->clear appointments (again contact the admin/manager)
+// ->made appointments (contact the admin/manager) (again check rooms. idts there will be need for doctors.)
+// ->view own info
+// ->update info
+// ->sign-in
+// ->logout
+// ->change password
+// ->view self appointments history
+
+
+// -------------------------------------------------------------------------------------------------------------------
+// patient:- 
+// -> no role //like it cant it self login to its account or can use app. It will be accessed by others just like nurses.
+
+// -------------------------------------------------------------------------------------------------------------------
+// nurse
+//->no role //almost same like patient
+// ->will be assigned only to doctors
+
+//Important instructions:-
+//1) dont use extra libraries like vectors, list, etc. Also dont use libraries for queue and stack.
+//2) also dont use struct and templates and graph library
+//3) Smile and write code with enthusiasm. ;-)
+
+.....................................
+
+
+To align your project with the assessment rubrics in the Open-Ended Data Structures Lab requirements while implementing the roles and functionalities described, here’s a structured approach:
+
+---
+
+## **Project Overview**
+
+### **Problem Statement**
+The project involves building a role-based hospital management system using core DSA concepts in C++. Each user type (Receptionist, Manager, Doctor, Ambulance Manager, etc.) has a defined scope of functionalities. The system is designed to manage appointments, patient information, and resource allocation while ensuring secure role-based access. 
+
+---
+
+## **Core Requirements and DSA Mapping**
+
+### 1. **Stacks** 
+   - Use for managing **undo/redo operations** for patient updates or resource allocations.
+   - Handle **navigation history** when viewing sequential patient or doctor data.
+
+### 2. **Queues**
+   - Implement **priority queues** for appointment scheduling.
+   - Regular queues for **ambulance assignments** based on request order.
+
+### 3. **Trees**
+   - Use **Binary Search Trees (BST)** for storing searchable data like patient records, doctors, or rooms.
+   - Each node in the BST represents an entity with quick search capabilities.
+
+### 4. **Graphs**
+   - Use graphs to represent **ambulance locations** and routes.
+   - Implement **shortest-path algorithms (Dijkstra's)** for routing ambulances efficiently.
+
+### 5. **Sorting Algorithms**
+   - Apply **merge sort** or **heap sort** to display sorted lists of doctors, patients, or appointments by name, availability, or priority.
+
+---
+
+## **System Design**
+
+### 1. **Role-Based Access**
+   - **Authentication Module**:
+     - Use hash-based password storage and a login system for Sign-in, Logout, Change Password.
+   - **Role Verification**:
+     - Implement role-checks to restrict functionalities (e.g., Receptionists can’t manage doctors).
+
+### 2. **Modules**
+#### a. **Receptionist**
+   - **Appointment Management**: Use queues for patient appointments.
+   - **Room Management**: Leverage BST for room allocation and availability checks.
+   - **Token Generation**: Use formatted output with details like patient ID, doctor name, and room ID.
+
+#### b. **Manager**
+   - **Resource Allocation**: Assign doctors and nurses to patients/rooms (linked list).
+   - **Global Access**: Read/modify any records.
+   - **Sorting**: Display sorted doctor and patient lists (Merge Sort/Quick Sort).
+
+#### c. **Doctor**
+   - **Prescriptions**: Append patient history using linked lists.
+   - **Appointment Management**: Update or clear daily appointments.
+
+#### d. **Ambulance Manager**
+   - **Graph Operations**: Manage and optimize ambulance routing using graph algorithms.
+   - **Queue Management**: Assign ambulances based on availability.
+
+#### e. **Patient and Nurse**
+   - **No Direct Role**: Accessed via managers or other staff.
+
+---
+
+## **Implementation Plan**
+
+1. **Define Classes**:
+   - `User` (base class): Handles Sign-in, Logout, Password Management.
+   - `Receptionist`, `Manager`, `Doctor`, `AmbulanceManager` (derived classes).
+   - Supporting classes: `Patient`, `Doctor`, `Room`, `Appointment`, `Ambulance`.
+
+2. **Data Structures Integration**:
+   - Stacks for history and undo features.
+   - Queues for scheduling and resource allocation.
+   - BST for searchable entities.
+   - Graphs for ambulance routing.
+   - Sorting algorithms for list displays.
+
+3. **Modular Approach**:
+   - Role-based modules are standalone and interact through the manager role.
+
+4. **Testing**:
+   - Create test cases covering all functionalities.
+   - Include edge cases like no available rooms, duplicate entries, etc.
+
+---
+
+## **Assessment Fit**
+
+1. **Proposal Clarity**:
+   - Clearly outline the hospital management system's need and impact.
+
+2. **Graph Usage**:
+   - Optimize ambulance routing and scheduling.
+
+3. **Sorting Application**:
+   - Use sorting for displaying sorted records efficiently.
+
+4. **Data Structure Usage**:
+   - Integrate all required structures purposefully into system design.
+
+5. **Code Quality**:
+   - Adhere to clean coding practices with detailed comments.
+
+6. **Functionality**:
+   - Ensure all described functionalities are tested and operational.
+
+7. **Presentation**:
+   - Provide a working demo with sample data.
+
+---
+
+Would you like a draft implementation of one of these modules or the authentication system?
